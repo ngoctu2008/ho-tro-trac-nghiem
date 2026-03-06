@@ -1,5 +1,5 @@
 // Hàm gọi Gemini API bất đồng bộ
-async function callGeminiAPI(apiKey, text, model = 'gemini-1.5-flash') {
+async function callGeminiAPI(apiKey, text, model = 'gemini-flash-latest') {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const prompt = `Bạn là một chuyên gia giải đề thi. Dưới đây là một câu hỏi trắc nghiệm (hoặc tự luận). Hãy chọn đáp án đúng nhất và giải thích ngắn gọn, dễ hiểu tại sao. Câu hỏi: ${text}`;
@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // 1. Lấy API Key và Model từ chrome.storage.local
     chrome.storage.local.get(['geminiApiKey', 'geminiModel'], async (result) => {
       const apiKey = result.geminiApiKey;
-      const model = result.geminiModel || 'gemini-1.5-flash'; // Fallback về model mặc định nếu chưa chọn
+      const model = result.geminiModel || 'gemini-flash-latest'; // Fallback về model mặc định nếu chưa chọn
 
       if (!apiKey || apiKey.trim() === '') {
         // Trả lỗi yêu cầu cài đặt API Key
