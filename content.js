@@ -26,9 +26,17 @@ function createTriggerButton() {
     triggerBtn.title = 'Hỏi Gemini';
     triggerBtn.style.display = 'none';
 
+    // Ngăn chặn hành vi mặc định (xóa bôi đen) khi click chuột xuống nút trigger
+    triggerBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
     // Xử lý khi bấm vào nút
     triggerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation(); // Tránh kích hoạt mousedown ngoài ý muốn
+
         hideTriggerButton();
         showLoadingState();
 
@@ -62,6 +70,11 @@ function createResultBox() {
 
 // 3. Xử lý khi bôi đen văn bản
 function handleSelection(e) {
+    // Nếu click rơi vào khung kết quả hoặc nút trigger thì không làm gì (giữ nguyên trạng thái)
+    if ((triggerBtn && triggerBtn.contains(e.target)) || (resultBox && resultBox.contains(e.target))) {
+        return;
+    }
+
     const selection = window.getSelection();
     selectedText = selection.toString().trim();
 

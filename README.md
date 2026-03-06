@@ -13,14 +13,14 @@ Một tiện ích mở rộng siêu nhẹ dành cho trình duyệt Chrome/Edge (
 Vì extension này đang ở dạng mã nguồn mở chưa được đưa lên Chrome Web Store, bạn sẽ cài đặt thông qua chế độ dành cho Nhà phát triển (Developer Mode).
 
 1. **Tải mã nguồn**:
-   - Tải toàn bộ thư mục `gemini-quiz-helper` về máy tính của bạn.
+   - Tải hoặc giải nén toàn bộ thư mục gốc (nơi chứa file `manifest.json`) về máy tính của bạn.
 2. **Mở trang Tiện ích (Extensions)**:
    - Trên Google Chrome hoặc Microsoft Edge, truy cập vào đường dẫn: `chrome://extensions/` (hoặc `edge://extensions/`).
 3. **Bật chế độ Nhà phát triển**:
    - Nhìn lên góc trên bên phải màn hình, bật công tắc **"Chế độ dành cho nhà phát triển"** (Developer mode).
 4. **Tải Tiện ích đã giải nén**:
    - Nhấn vào nút **"Tải tiện ích đã giải nén"** (Load unpacked) ở góc trên bên trái.
-   - Chọn thư mục `gemini-quiz-helper` mà bạn vừa tải về.
+   - Chọn **thư mục gốc mà bạn vừa tải về (ví dụ: jules_session_...)**, không chọn vào các thư mục con sâu hơn. Miễn là trình duyệt thấy được file `manifest.json` bên trong là sẽ cài được thành công.
 5. Tiện ích sẽ xuất hiện trong danh sách. Hãy ghim nó lên thanh công cụ (Toolbar) nếu cần thiết.
 
 ## ⚙️ Hướng dẫn Cấu hình API Key

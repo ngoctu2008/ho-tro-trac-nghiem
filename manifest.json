@@ -4,9 +4,7 @@
   "version": "1.0.0",
   "description": "Giải đề trắc nghiệm nhanh chóng bằng Google Gemini API. Bôi đen câu hỏi và nhận đáp án ngay lập tức.",
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"

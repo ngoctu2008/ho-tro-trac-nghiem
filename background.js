@@ -1,6 +1,6 @@
 // Hàm gọi Gemini API bất đồng bộ
-async function callGeminiAPI(apiKey, text) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+async function callGeminiAPI(apiKey, text, model = 'gemini-1.5-flash') {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const prompt = `Bạn là một chuyên gia giải đề thi. Dưới đây là một câu hỏi trắc nghiệm (hoặc tự luận). Hãy chọn đáp án đúng nhất và giải thích ngắn gọn, dễ hiểu tại sao. Câu hỏi: ${text}`;
 
@@ -48,6 +48,11 @@ async function callGeminiAPI(apiKey, text) {
   }
 }
 
+// Lắng nghe sự kiện click vào icon extension trên thanh công cụ để mở trang Options
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
+});
+
 // Lắng nghe Message từ Content Script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Action 1: Mở trang Options
@@ -60,9 +65,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'askGemini') {
     const questionText = request.text;
 
-    // 1. Lấy API Key từ chrome.storage.local
-    chrome.storage.local.get(['geminiApiKey'], async (result) => {
+    // 1. Lấy API Key và Model từ chrome.storage.local
+    chrome.storage.local.get(['geminiApiKey', 'geminiModel'], async (result) => {
       const apiKey = result.geminiApiKey;
+      const model = result.geminiModel || 'gemini-1.5-flash'; // Fallback về model mặc định nếu chưa chọn
 
       if (!apiKey || apiKey.trim() === '') {
         // Trả lỗi yêu cầu cài đặt API Key
@@ -71,7 +77,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
 
       // 2. Gọi API nếu có Key
-      const response = await callGeminiAPI(apiKey, questionText);
+      const response = await callGeminiAPI(apiKey, questionText, model);
       sendResponse(response);
     });
 
