@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Cài đặt Gemini Quiz Helper</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+    p {
+      line-height: 1.6;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước input */
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .status {
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cài đặt Gemini Quiz Helper</h1>
+    <p>Để extension hoạt động, bạn cần cung cấp API Key của Google Gemini.</p>
+    <p>Bạn có thể lấy API Key miễn phí tại: <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+
+    <label for="apiKey">Google Gemini API Key:</label>
+    <input type="text" id="apiKey" placeholder="Nhập API Key vào đây...">
+
+    <button id="saveBtn">Lưu lại</button>
+    <div id="statusMsg" class="status">Đã lưu thành công!</div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

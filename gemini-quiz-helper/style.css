@@ -1,0 +1,125 @@
+/* Nút/Icon trigger nổi lên gần văn bản bôi đen */
+.gemini-trigger-btn {
+  position: absolute;
+  z-index: 10000;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 32px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.gemini-trigger-btn:hover {
+  transform: scale(1.1);
+  background-color: #0056b3;
+}
+
+/* Khung hiển thị kết quả (Floating Box) ở góc dưới phải màn hình */
+.gemini-result-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  border: 1px solid #eaeaea;
+}
+
+.gemini-result-box.hidden {
+  display: none;
+}
+
+/* Thanh Header của khung kết quả */
+.gemini-result-header {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gemini-result-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gemini-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.gemini-close-btn:hover {
+  color: #d9534f;
+}
+
+/* Khu vực nội dung kết quả */
+.gemini-result-content {
+  padding: 15px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+/* Các trạng thái loading và error */
+.gemini-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #007bff;
+  font-style: italic;
+}
+
+.gemini-error {
+  color: #d9534f;
+  background-color: #fdf2f2;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #f5c6c6;
+}
+
+/* Nút đi tới Cài đặt (nếu thiếu API Key) */
+.gemini-settings-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #ff9800;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+}
+
+.gemini-settings-btn:hover {
+  background-color: #e68a00;
+}
