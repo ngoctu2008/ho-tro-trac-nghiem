@@ -55,7 +55,18 @@ function startGeminiStream(text) {
 
     port.postMessage({ action: 'askGeminiStream', text: text });
 
+    // Đặt timeout nếu sau 10 giây không có msg nào từ lúc gửi thì báo lỗi (tránh kẹt mãi loading)
+    let isReceived = false;
+    const timeoutId = setTimeout(() => {
+        if (!isReceived) {
+            const content = resultBox.querySelector('.gemini-result-content');
+            handleStreamError('Không nhận được phản hồi từ máy chủ. Có thể do lỗi mạng hoặc Extension Service Worker bị ngủ đông. Hãy thử lại.', content);
+            port.disconnect();
+        }
+    }, 10000);
+
     port.onMessage.addListener((msg) => {
+        isReceived = true; // Đánh dấu đã nhận tín hiệu
         const content = resultBox.querySelector('.gemini-result-content');
 
         if (msg.error) {
@@ -73,6 +84,14 @@ function startGeminiStream(text) {
             content.scrollTop = content.scrollHeight;
         } else if (msg.done) {
             port.disconnect();
+        }
+    });
+
+    // Lắng nghe sự cố mất kết nối port (ví dụ khi background script bị ngắt ngẫu nhiên)
+    port.onDisconnect.addListener(() => {
+        if (!isReceived) {
+             const content = resultBox.querySelector('.gemini-result-content');
+             handleStreamError('Mất kết nối với Background Script. Hãy tải lại trang và thử lại.', content);
         }
     });
 }

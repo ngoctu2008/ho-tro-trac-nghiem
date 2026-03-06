@@ -36,32 +36,22 @@ async function callGeminiAPIStream(apiKey, text, model, port) {
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {
+        // Đã đọc xong toàn bộ stream
+        if (buffer.trim()) {
+           tryProcessBufferLine(buffer, port);
+        }
+        break;
+      }
 
       buffer += decoder.decode(value, { stream: true });
 
-      // SSE (Server-Sent Events) chia các block data bằng 2 dấu xuống dòng
-      const lines = buffer.split('\n\n');
-      // Giữ lại phần tử cuối cùng vì có thể nó chưa đầy đủ block (chưa có \n\n)
-      buffer = lines.pop();
+      // SSE chia các block data bằng 2 dấu xuống dòng hoặc có thể 1 dấu tùy payload
+      let parts = buffer.split(/\n\n|\r\n\r\n/);
+      buffer = parts.pop() || ''; // Phần tử cuối cùng có thể chưa hoàn chỉnh
 
-      for (let line of lines) {
-        if (line.startsWith('data: ')) {
-          const jsonStr = line.replace('data: ', '').trim();
-          if (jsonStr === '') continue;
-
-          try {
-            const data = JSON.parse(jsonStr);
-            // Lấy text chunk từ luồng
-            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts.length > 0) {
-              const textChunk = data.candidates[0].content.parts[0].text;
-              // Gửi chunk text ngay lập tức qua port tới Content Script
-              port.postMessage({ chunk: textChunk });
-            }
-          } catch (e) {
-            console.error('Lỗi khi parse JSON chunk:', e);
-          }
-        }
+      for (let part of parts) {
+        tryProcessBufferLine(part, port);
       }
     }
 
@@ -76,6 +66,30 @@ async function callGeminiAPIStream(apiKey, text, model, port) {
     }
     // Gửi lỗi qua port
     port.postMessage({ error: errorMessage });
+  }
+}
+
+// Hàm xử lý từng line buffer
+function tryProcessBufferLine(line, port) {
+  // Loại bỏ các dòng thừa, chỉ lấy dòng bắt đầu bằng `data: `
+  const lines = line.split('\n');
+  for (let l of lines) {
+    l = l.trim();
+    if (l.startsWith('data: ')) {
+      const jsonStr = l.substring(6).trim(); // Bỏ chữ 'data: '
+      if (!jsonStr) continue;
+
+      try {
+        const data = JSON.parse(jsonStr);
+        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts.length > 0) {
+          const textChunk = data.candidates[0].content.parts[0].text;
+          port.postMessage({ chunk: textChunk });
+        }
+      } catch (e) {
+        // Có thể là JSON không hợp lệ, bỏ qua
+        console.error('JSON Parse error:', e, jsonStr);
+      }
+    }
   }
 }
 
