@@ -26,7 +26,14 @@ async function callGeminiAPIStream(apiKey, text, model, port) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || `Lỗi HTTP: ${response.status}`);
+      let errorMsg = errorData.error?.message || `Lỗi HTTP: ${response.status}`;
+
+      // Xử lý thông báo lỗi thân thiện cho người dùng khi bị giới hạn Quota (429)
+      if (response.status === 429 || errorMsg.includes('quota') || errorMsg.includes('Quota exceeded')) {
+        errorMsg = 'Bạn đã sử dụng hết lượt hỏi miễn phí của Gemini (Quota exceeded) hoặc gửi yêu cầu quá nhanh. Vui lòng chờ một chút rồi thử lại, hoặc kiểm tra lại tài khoản Google AI Studio của bạn.';
+      }
+
+      throw new Error(errorMsg);
     }
 
     // Đọc luồng dữ liệu liên tục từ Gemini

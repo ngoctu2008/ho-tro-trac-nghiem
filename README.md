@@ -42,5 +42,40 @@ Vì extension này đang ở dạng mã nguồn mở chưa được đưa lên C
 5. Chờ vài giây để Gemini suy nghĩ. Khung hiển thị sẽ hiện lên ở góc phải màn hình cùng đáp án và giải thích chi tiết.
 6. Sau khi đọc xong, bạn có thể nhấn nút **[X]** để đóng khung.
 
+## 🌍 Hướng Dẫn Đưa Lên Chrome Web Store
+
+Nếu bạn muốn chia sẻ ứng dụng này cho mọi người cùng cài đặt trực tiếp qua cửa hàng chính thức của Google, hãy làm theo các bước sau:
+
+**Bước 1: Nén mã nguồn**
+* Chọn tất cả các file trong thư mục gốc (bao gồm `manifest.json`, `background.js`, `content.js`, `options.html`, `options.js`, `style.css`...).
+* Click chuột phải và nén chúng thành một file `.zip`. *(Lưu ý: Nén trực tiếp các file, không nén nguyên thư mục cha).*
+
+**Bước 2: Đăng ký tài khoản Nhà phát triển**
+* Truy cập trang [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole/).
+* Đăng nhập bằng tài khoản Google. Bạn sẽ cần trả khoản phí một lần là **$5** để kích hoạt tài khoản Nhà phát triển.
+
+**Bước 3: Tải file .zip lên**
+* Trong giao diện Developer Dashboard, nhấn nút **"New Item"** (Mục mới) ở góc trên bên phải.
+* Kéo thả file `.zip` bạn vừa tạo vào để tải lên hệ thống.
+
+**Bước 4: Cập nhật thông tin cửa hàng (Store Listing)**
+Sau khi tải lên thành công, bạn cần điền các thông tin sau để người dùng biết đến ứng dụng của bạn:
+* **Tên và Mô tả**: Điền tên ứng dụng (VD: Gemini Quiz Helper) và mô tả chi tiết công dụng.
+* **Biểu tượng (Icon)**: Tải lên các hình ảnh icon cho ứng dụng (thường là kích thước `128x128` pixel). Nếu bạn chưa có, hãy tạo một ảnh nhỏ và tham chiếu nó trong `manifest.json` (phần `"icons"`).
+* **Ảnh chụp màn hình (Screenshots)**: Chụp lại màn hình lúc ứng dụng đang hoạt động (kích thước thường dùng là `1280x800` hoặc `640x400`).
+
+**Bước 5: Khai báo Quyền riêng tư (Privacy)**
+Đây là bước cực kỳ quan trọng đối với extension dùng API:
+* Giải thích lý do bạn cần quyền `storage` (để lưu API Key do người dùng tự nhập) và `activeTab` / `<all_urls>` (để đọc văn bản bôi đen trên trang).
+* Tích chọn xác nhận bạn **không** thu thập dữ liệu cá nhân hay gửi văn bản người dùng đọc về bất kỳ máy chủ nào khác ngoài Google API.
+
+**Bước 6: Gửi đánh giá (Submit for Review)**
+* Khi đã điền đủ thông tin, nhấn **"Submit for Review"** (Gửi đi để xem xét).
+* Đội ngũ Google sẽ duyệt thủ công extension của bạn. Quá trình này thường mất từ vài ngày đến 1 tuần. Sau khi được duyệt, ứng dụng sẽ chính thức có mặt trên Chrome Web Store!
+
+## 👤 Tác Giả
+- **Tên**: Ngọc Tú
+- **Email**: ngoctu.dnkd@gmail.com
+
 ---
 *Mã nguồn được viết theo chuẩn ES6+ và có chú thích (comment) rõ ràng bằng tiếng Việt để bạn dễ dàng tùy biến hoặc nâng cấp theo ý muốn.*
