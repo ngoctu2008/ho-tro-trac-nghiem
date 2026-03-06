@@ -40,11 +40,61 @@ function createTriggerButton() {
         hideTriggerButton();
         showLoadingState();
 
-        // Gửi nội dung bôi đen tới Background Script để gọi API
-        chrome.runtime.sendMessage({ action: 'askGemini', text: selectedText }, handleBackgroundResponse);
+        // Khởi tạo kết nối dài hạn để nhận stream data
+        startGeminiStream(selectedText);
     });
 
     document.body.appendChild(triggerBtn);
+}
+
+// Gọi API Streaming qua Port
+let currentStreamResult = '';
+function startGeminiStream(text) {
+    currentStreamResult = ''; // Xóa kết quả cũ
+    const port = chrome.runtime.connect({ name: 'gemini-stream' });
+
+    port.postMessage({ action: 'askGeminiStream', text: text });
+
+    port.onMessage.addListener((msg) => {
+        const content = resultBox.querySelector('.gemini-result-content');
+
+        if (msg.error) {
+            handleStreamError(msg.error, content);
+            port.disconnect();
+        } else if (msg.chunk) {
+            // Khi có chunk mới, xóa trạng thái loading (nếu còn) và cộng dồn text
+            const loadingDiv = content.querySelector('.gemini-loading');
+            if (loadingDiv) loadingDiv.remove();
+
+            currentStreamResult += msg.chunk;
+            content.innerHTML = `<div>${parseMarkdownToHTML(currentStreamResult)}</div>`;
+
+            // Tự động cuộn xuống dưới
+            content.scrollTop = content.scrollHeight;
+        } else if (msg.done) {
+            port.disconnect();
+        }
+    });
+}
+
+function handleStreamError(errorMsg, contentElement) {
+    if (errorMsg === 'MISSING_API_KEY') {
+        contentElement.innerHTML = `
+            <div class="gemini-error">
+                <p>⚠️ Bạn chưa cấu hình Google Gemini API Key.</p>
+                <button class="gemini-settings-btn" id="openSettingsBtn">Đến trang Cài đặt</button>
+            </div>
+        `;
+        // Gắn sự kiện để mở trang cài đặt
+        const openSettingsBtn = contentElement.querySelector('#openSettingsBtn');
+        if (openSettingsBtn) {
+            openSettingsBtn.addEventListener('click', () => {
+                chrome.runtime.sendMessage({ action: 'openOptionsPage' });
+            });
+        }
+    } else {
+        contentElement.innerHTML = `<div class="gemini-error">Lỗi: ${errorMsg}</div>`;
+    }
 }
 
 // 2. Tạo khung kết quả nổi (Floating Box) ẩn ở góc dưới bên phải
@@ -133,38 +183,6 @@ function parseMarkdownToHTML(markdownText) {
     html = html.replace(/\n/g, '<br>');
 
     return html;
-}
-
-// 5. Xử lý phản hồi từ Background Script
-function handleBackgroundResponse(response) {
-    const content = resultBox.querySelector('.gemini-result-content');
-
-    if (response.error) {
-        // Xử lý trường hợp thiếu API Key hoặc lỗi khác
-        if (response.error === 'MISSING_API_KEY') {
-            content.innerHTML = `
-                <div class="gemini-error">
-                    <p>⚠️ Bạn chưa cấu hình Google Gemini API Key.</p>
-                    <button class="gemini-settings-btn" id="openSettingsBtn">Đến trang Cài đặt</button>
-                </div>
-            `;
-            // Gắn sự kiện để mở trang cài đặt
-            const openSettingsBtn = content.querySelector('#openSettingsBtn');
-            if (openSettingsBtn) {
-                openSettingsBtn.addEventListener('click', () => {
-                    chrome.runtime.sendMessage({ action: 'openOptionsPage' });
-                });
-            }
-        } else {
-            content.innerHTML = `<div class="gemini-error">Lỗi: ${response.error}</div>`;
-        }
-    } else if (response.result) {
-        // Render kết quả từ Gemini sau khi parse Markdown
-        const htmlContent = parseMarkdownToHTML(response.result);
-        content.innerHTML = `<div>${htmlContent}</div>`;
-    } else {
-        content.innerHTML = `<div class="gemini-error">Không nhận được phản hồi từ Gemini.</div>`;
-    }
 }
 
 // Chạy khởi tạo
